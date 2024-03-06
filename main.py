@@ -1,14 +1,14 @@
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from bs4 import BeautifulSoup
 import csv
-import time
 import random
+import time
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 def web_scraper(driver, writer):
@@ -39,21 +39,18 @@ def web_scraper(driver, writer):
         location_text = location.text
         rating_text = rating.text
         duration_text = duration.text
-         
+
         writer.writerow([title.text, rating_text, review.text, category.text, details_text, location_text, duration_text])
 
         driver.close()
-        time.sleep(random.randint(5, 15))
-
-        driver.switch_to.window(original_tab)   
+        driver.switch_to.window(original_tab)
 
 
 def main():
     options = Options()
     options.add_argument('--ignore-ssl-errors=yes')
     options.add_argument('--ignore-certificate-errors')
-    options.add_argument(
-        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
 
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     driver.get("https://www.tripadvisor.com/Attractions-g2467810-Activities-oa0-Southern_Province.html")
@@ -64,15 +61,15 @@ def main():
         writer.writerow(["Title", "Rating", "Review", "Category", "About", "Location", "Duration"])
 
         while True:
-                try:
-                    web_scraper(driver, writer)
-                    next_button_xpath = """/html/body/div[1]/main/div[1]/div/div[3]/div/div[2]/div[2]/div[2]/div/div/div[2]/div/div[2]/div/div/section[40]/div/div[1]/div/div[1]/div[2]/div"""
-                    next_page = driver.find_element(By.XPATH, next_button_xpath)
-                    next_page.click()
-                    time.sleep(random.randint(5, 15))
-                except Exception as e:
-                    print("Error : ", e)
-                    break
+            try:
+                web_scraper(driver, writer)
+                next_button_xpath = """/html/body/div[1]/main/div[1]/div/div[3]/div/div[2]/div[2]/div[2]/div/div/div[2]/div/div[2]/div/div/section[40]/div/div[1]/div/div[1]/div[2]/div"""
+                next_page = driver.find_element(By.XPATH, next_button_xpath)
+                next_page.click()
+                time.sleep(random.randint(5, 15))
+            except Exception as e:
+                print("Error : ", e)
+                break
 
 
 if __name__ == "__main__":
